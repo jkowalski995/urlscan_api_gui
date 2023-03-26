@@ -6,8 +6,8 @@ In order to run the proper scan it is needed to create the `config.txt` file wit
 
 The path to the `config.txt` is needed to be added in:
 
-    `if api_key is None:
-        with open('config.txt') as config:`
-            api_key = config.readline()`
+    if api_key is None:
+        with open('config.txt') as config:
+            api_key = config.readline()
 
 This is the version 0.1 - more updates coming soon!
