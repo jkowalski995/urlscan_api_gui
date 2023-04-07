@@ -11,3 +11,24 @@ The path to the `config.txt` is needed to be added in:
             api_key = config.readline()
 
 This is the version 0.1 - more updates coming soon!
+
+## Setup
+
+### configure virtualenv (recommended) 
+
+`python3 -m venv venv`
+
+`source venv/bin/activate`
+
+### configure passivetotal API key (required)
+
+`pip3 install -r requirements.txt`
+
+`pt-config setup user@example.com` - This will create a file in ~/.config/passivetotal with the credentials used by passivetotal
+
+
+## Issues
+
+### ModuleNotFoundError: No module named 'tkinter'
+
+(debian-based systems) `apt install python3-tk`
