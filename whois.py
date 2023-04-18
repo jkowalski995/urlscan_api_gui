@@ -1,23 +1,54 @@
-import pdb
 from passivetotal import analyzer
 
-def init_analyzer(domain):
+
+def whois_an(domain=None):
+    # TODO: Solve auto logging without command line commands
+    """
+
+    Before first run
+    In terminal:
+
+    $ pt-config setup <USERNAME>
+    After being prompt provide API-KEY
+
+    https://pypi.org/project/passivetotal/1.0.25/
+
+    Same to do when running in PyCharm -> navigate to the Terminal at the bottom and configure the API-KEY
+
+    Will connect with the RiskIQ API and return values from it. Already supported values are:
+    host, registrant, registrar, IP, NS(s), and MX(s)
+    :param domain: (string) a string url of scanned website with or without https://www.
+    :return: (string) all information obtained from passivetotal
+    """
+    whois_record = ""
+
     analyzer.init()
-    analyzer.set_date_range(days_back=30)
-    pt_object = analyzer.Hostname('atos.net')
-    return pt_object
-
-# pdns = pt_object.ip.resolutions
-# for record in pdns.sorted_by('lastseen'):
-#     print(record)
-
-# print('------')
-# whois = pt_object.whois
-# print()
-# age = pt_object.whois.age  # e.g. 5548
-# print(age)
-# pdb.set_trace()
-
-
-#A "staging-api.passivetotal.org" [ 465 days] (2019-12-11 to 2021-03-21)
-#A "api.passivetotal.org" [ 459 days] (2019-12-18 to 2021-03-22)
+    host = analyzer.Hostname(domain)
+    registrant = host.whois.organization
+    whois_record = whois_record + "Analyzed host: " + str(host) + "\n"
+    whois_record = whois_record + "Registrant: " + str(registrant) + "\n"
+    whois_record = whois_record + "Registrar: " + str(analyzer.Hostname(domain).whois.registrar) + "\n"
+    whois_record = whois_record + "IP: " + str(analyzer.Hostname(domain).ip) + "\n"
+    whois_record += "Nameserver(s): \n"
+    for record in analyzer.Hostname(domain).whois.nameservers:
+        whois_record += str(record)
+        whois_record += "\n"
+    whois_record += "MX(s): \n"
+    for record in analyzer.Hostname(domain).resolutions.only_hostnames.filter(recordtype='MX'):
+        whois_record += str(record)
+        whois_record += "\n"
+    # Host
+    # print(f'host {host}')
+    # Registrant
+    # print(f'registrant {registrant}')
+    # NS
+    # for record in analyzer.Hostname('riskiq.net').whois.nameservers:
+    #     print(f'Nameserver {record}')
+    # Registrar
+    # print(f"Registrar {analyzer.Hostname('riskiq.net').whois.registrar}")
+    # IP
+    # print(f"IP {analyzer.Hostname('riskiq.net').ip}")
+    # MX
+    # for record in analyzer.Hostname('riskiq.net').resolutions.only_hostnames.filter(recordtype = 'MX'):
+    #     print(record)
+    return whois_record

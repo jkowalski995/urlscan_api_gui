@@ -10,9 +10,12 @@ import whois
 from urllib.parse import urlparse
 from io import BytesIO
 
+# TODO: Size of the app. Maybe reorganization of the app window
+
 global_data = {
     'whois': None
 }
+
 
 def api_call(url=None):
     """
@@ -92,6 +95,7 @@ def save_image(url=None, path=None, data=None):
 
     image_to_save.save(path + url + '.png')
 
+
 def save_whois(text=None, path=None):
     """
     Will save the passed raw text as .txt file
@@ -105,19 +109,21 @@ def save_whois(text=None, path=None):
             return True
     return False
 
+
 layout = [
-          [sg.Text('Save results to: '), 
-            sg.InputText('C:\\', key='-PATH-'), 
-            sg.Button(button_text='', image_filename='./img/folder.png', image_size=(16,16), border_width=0, button_color="#fff on #ccc", tooltip='Set to current directory', key='-SET-CURRENT-DIR-')],
-          [sg.Text('URL, e.g. https://domain.to.scan.url :')],
-          [sg.InputText('', key='-URL-'),
-           sg.Button('Scan', key='-SCAN-', bind_return_key=True), sg.Button('Show original image size', key='-SHOW-'),
-           sg.Button('Save original image', key='-SAVE-')], 
-          [sg.Button('Get Whois', key='-GET-WHOIS-'), sg.Button('Save Whois to whois.txt', key='-SAVE-WHOIS-')], 
-          [sg.Text('...', key='-WHOIS-RAW-')],
-          [sg.Image(size=(800, 600), key='-IMAGE-')],
-          [sg.Exit()],
-          ]
+    [sg.Text('Save results to: '),
+     sg.InputText('C:\\', key='-PATH-'),
+     sg.Button(button_text='', image_filename='./img/folder.png', image_size=(16, 16), border_width=0,
+               button_color="#fff on #ccc", tooltip='Set to current directory', key='-SET-CURRENT-DIR-')],
+    [sg.Text('URL, e.g. https://domain.to.scan.url :')],
+    [sg.InputText('', key='-URL-'),
+     sg.Button('Scan', key='-SCAN-', bind_return_key=True), sg.Button('Show original image size', key='-SHOW-'),
+     sg.Button('Save original image', key='-SAVE-')],
+    [sg.Button('Get Whois', key='-GET-WHOIS-'), sg.Button('Save Whois to whois.txt', key='-SAVE-WHOIS-')],
+    [sg.Text('...', key='-WHOIS-RAW-')],
+    [sg.Image(size=(800, 600), key='-IMAGE-')],
+    [sg.Exit()],
+]
 
 window = sg.Window('URLSCAN API CONNECT', layout)
 
@@ -153,37 +159,31 @@ while True:
             continue
     if event == '-SET-CURRENT-DIR-':
         window['-PATH-'].update(os.getcwd() + os.sep)
+
     if event == '-GET-WHOIS-':
         url = values['-URL-']
         parsed = urlparse(url)
 
-        if (len(parsed.scheme) == 0 and len(parsed.netloc) == 0):
+        if len(parsed.scheme) == 0 and len(parsed.netloc) == 0:
             host = parsed.path
-        elif (len(parsed.netloc) > 0):
+        elif len(parsed.netloc) > 0:
             host = parsed.netloc
         else:
             sg.popup(f'Invalid URL', title='Error!')
             pdb.set_trace()
             continue
 
-        whois_data = whois.init_analyzer(host).whois
+        whois_data = whois.whois_an(host)
         global_data['whois'] = whois_data
-        show_in_gui_whois = whois_data.raw['rawText']
+        window['-WHOIS-RAW-'].update(whois_data)
 
-        if (len(show_in_gui_whois.split('\n')) > 7):
-            show_in_gui_whois = '\n'.join(show_in_gui_whois.split('\n')[0:6]) + '\n... [truncated]'
-
-        window['-WHOIS-RAW-'].update(show_in_gui_whois)
-            
-        # window['-PATH-'].update(os.getcwd() + os.sep)
     if event == '-SAVE-WHOIS-':
         try:
-            save_whois(text=global_data['whois'].raw['rawText'], path=values['-PATH-'])
+            save_whois(text=global_data['whois'], path=values['-PATH-'])
             sg.popup(f'Saved!', title='Success!')
         except (FileNotFoundError, NameError):
             sg.popup(f'The path is broken. \nCheck if provided PATH is correct.\nOr do the scan before saving '
                      f'the whois.txt file!', title='Error!')
             continue
-
 
 window.close()
