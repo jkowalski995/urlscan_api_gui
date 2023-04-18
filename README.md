@@ -24,7 +24,10 @@ This is the version 0.1 - more updates coming soon!
 
 `pip3 install -r requirements.txt`
 
-`pt-config setup user@example.com` - This will create a file in ~/.config/passivetotal with the credentials used by passivetotal
+`pt-config setup user@example.com` - This will create a file in
+`~/.config/passivetotal` for Linux
+or in `C:\Users\<Username>\.config\passivetotal` for Windows
+with the credentials used by passivetotal
 
 
 ## Issues

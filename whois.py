@@ -21,7 +21,7 @@ def whois_an(domain=None):
     :return: (string) all information obtained from passivetotal
     """
     whois_record = ""
-
+    # TODO: Prevent from errors when one of the parameters is not available
     analyzer.init()
     host = analyzer.Hostname(domain)
     registrant = host.whois.organization
