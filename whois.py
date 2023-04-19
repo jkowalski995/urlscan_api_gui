@@ -21,21 +21,48 @@ def whois_an(domain=None):
     :return: (string) all information obtained from passivetotal
     """
     whois_record = ""
-    # TODO: Prevent from errors when one of the parameters is not available
+
     analyzer.init()
     host = analyzer.Hostname(domain)
-    registrant = host.whois.organization
+
+    try:
+        registrant = host.whois.organization
+    except Exception:
+        registrant = ""
+
     whois_record = whois_record + "Analyzed host: " + str(host) + "\n"
     whois_record = whois_record + "Registrant: " + str(registrant) + "\n"
-    whois_record = whois_record + "Registrar: " + str(analyzer.Hostname(domain).whois.registrar) + "\n"
-    whois_record = whois_record + "IP: " + str(analyzer.Hostname(domain).ip) + "\n"
+
+    try:
+        registrar = analyzer.Hostname(domain).whois.registrar
+    except Exception:
+        registrar = ""
+
+    whois_record = whois_record + "Registrar: " + str(registrar) + "\n"
+
+    try:
+        ip = analyzer.Hostname(domain).ip
+    except Exception:
+        ip = ""
+
+    whois_record = whois_record + "IP: " + str(ip) + "\n"
+
     whois_record += "Nameserver(s): \n"
-    for record in analyzer.Hostname(domain).whois.nameservers:
-        whois_record += str(record)
+    try:
+        for record in analyzer.Hostname(domain).whois.nameservers:
+            whois_record += str(record)
+            whois_record += "\n"
+    except Exception:
+        whois_record += ""
         whois_record += "\n"
+
     whois_record += "MX(s): \n"
-    for record in analyzer.Hostname(domain).resolutions.only_hostnames.filter(recordtype='MX'):
-        whois_record += str(record)
+    try:
+        for record in analyzer.Hostname(domain).resolutions.only_hostnames.filter(recordtype='MX'):
+            whois_record += str(record)
+            whois_record += "\n"
+    except Exception:
+        whois_record += ""
         whois_record += "\n"
     # Host
     # print(f'host {host}')

@@ -2,43 +2,15 @@ import PySimpleGUI as sg
 import PIL.Image
 import io
 import base64
-import requests
-import json
-import time
 import os, pdb
 import whois
+from image import api_call
 from urllib.parse import urlparse
 from io import BytesIO
-
-# TODO: Size of the app. Maybe reorganization of the app window
 
 global_data = {
     'whois': None
 }
-
-
-def api_call(url=None):
-    """
-    Will connect with urlscan.io API and retrieve an image (bytes) of provided url.
-    :param url: (string) a string url of scanned website with or without https://www.
-    :return: (bytes) image view in bytes object
-    """
-    with open('config.txt', 'r') as config:
-        api_key = config.readline()[:-1]
-
-    headers = {'API-Key': api_key, 'Content-Type': 'application/json'}
-    data = {"url": url, "visibility": "private"}
-    response = requests.post('https://urlscan.io/api/v1/scan/', headers=headers, data=json.dumps(data))
-    print(response)
-    uuid = response.json()['uuid']
-
-    time.sleep(15)
-
-    response = requests.get('https://urlscan.io/screenshots/' + uuid + '.png', headers=headers, data=json.dumps(data))
-    print(response)
-    img_bytes = response.content
-
-    return img_bytes
 
 
 def convert_to_bytes(file_or_bytes, resize=None):
@@ -103,7 +75,7 @@ def save_whois(text=None, path=None):
     :param path: (string) a string path to the place where the image should be saved
     :return: True, if it saved a text file, otherwise False
     """
-    if (len(text) > 0):
+    if len(text) > 0:
         with open('{0}whois.txt'.format(path), 'a') as f:
             f.write(text)
             return True
@@ -116,23 +88,23 @@ layout = [
      sg.Button(button_text='', image_filename='./img/folder.png', image_size=(16, 16), border_width=0,
                button_color="#fff on #ccc", tooltip='Set to current directory', key='-SET-CURRENT-DIR-')],
     [sg.Text('URL, e.g. https://domain.to.scan.url :')],
-    [sg.InputText('', key='-URL-'),
-     sg.Button('Scan', key='-SCAN-', bind_return_key=True), sg.Button('Show original image size', key='-SHOW-'),
+    [sg.InputText('', key='-URL-')],
+    [sg.Button('Get Whois', key='-GET-WHOIS-'), sg.Button('Save Whois to whois.txt', key='-SAVE-WHOIS-'),
+     sg.Button('Get Image', key='-GET-IMAGE-', bind_return_key=True),
+     sg.Button('Show original image size', key='-SHOW-'),
      sg.Button('Save original image', key='-SAVE-')],
-    [sg.Button('Get Whois', key='-GET-WHOIS-'), sg.Button('Save Whois to whois.txt', key='-SAVE-WHOIS-')],
-    [sg.Text('...', key='-WHOIS-RAW-')],
-    [sg.Image(size=(800, 600), key='-IMAGE-')],
+    [sg.Text('...', key='-WHOIS-RAW-'), sg.Image(size=(800, 600), key='-IMAGE-')],
     [sg.Exit()],
 ]
 
-window = sg.Window('URLSCAN API CONNECT', layout)
+window = sg.Window('DOMAIN SCAN', layout)
 
 while True:
     event, values = window.read()
     print(event, values)  # for debugging
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
-    if event == '-SCAN-':
+    if event == '-GET-IMAGE-':
         url = values['-URL-']
         try:
             data = api_call(url)
