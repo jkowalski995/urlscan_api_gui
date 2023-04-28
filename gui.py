@@ -89,7 +89,7 @@ layout = [
                button_color="#fff on #ccc", tooltip='Set to current directory', key='-SET-CURRENT-DIR-')],
     [sg.Text('URL, e.g. https://domain.to.scan.url :')],
     [sg.InputText('', key='-URL-')],
-    [sg.Button('Get Whois', key='-GET-WHOIS-'), sg.Button('Save Whois to whois.txt', key='-SAVE-WHOIS-'),
+    [sg.Button('Get Basic Whois', key='-GET-WHOIS-'), sg.Button('Save Whois to whois.txt', key='-SAVE-WHOIS-'),
      sg.Button('Get Image', key='-GET-IMAGE-', bind_return_key=True),
      sg.Button('Show original image size', key='-SHOW-'),
      sg.Button('Save original image', key='-SAVE-')],
@@ -150,8 +150,21 @@ while True:
         window['-WHOIS-RAW-'].update(whois_data)
 
     if event == '-SAVE-WHOIS-':
+        url = values['-URL-']
+        parsed = urlparse(url)
+
+        if len(parsed.scheme) == 0 and len(parsed.netloc) == 0:
+            host = parsed.path
+        elif len(parsed.netloc) > 0:
+            host = parsed.netloc
+        else:
+            sg.popup(f'Invalid URL', title='Error!')
+            pdb.set_trace()
+            continue
+        full_whois = whois.raw_whois(host)
+        global_data['full_whois'] = full_whois
         try:
-            save_whois(text=global_data['whois'], path=values['-PATH-'])
+            save_whois(text=global_data['full_whois'], path=values['-PATH-'])
             sg.popup(f'Saved!', title='Success!')
         except (FileNotFoundError, NameError):
             sg.popup(f'The path is broken. \nCheck if provided PATH is correct.\nOr do the scan before saving '

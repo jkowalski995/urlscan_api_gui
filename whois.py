@@ -2,7 +2,6 @@ from passivetotal import analyzer
 
 
 def whois_an(domain=None):
-    # TODO: Solve auto logging without command line commands
     """
 
     Before first run
@@ -64,18 +63,19 @@ def whois_an(domain=None):
     except Exception:
         whois_record += ""
         whois_record += "\n"
-    # Host
-    # print(f'host {host}')
-    # Registrant
-    # print(f'registrant {registrant}')
-    # NS
-    # for record in analyzer.Hostname('riskiq.net').whois.nameservers:
-    #     print(f'Nameserver {record}')
-    # Registrar
-    # print(f"Registrar {analyzer.Hostname('riskiq.net').whois.registrar}")
-    # IP
-    # print(f"IP {analyzer.Hostname('riskiq.net').ip}")
-    # MX
-    # for record in analyzer.Hostname('riskiq.net').resolutions.only_hostnames.filter(recordtype = 'MX'):
-    #     print(record)
+
     return whois_record
+
+
+def raw_whois(domain=None):
+    """
+    Will connect with PassiveTotal API and gather raw WhoIs record for provided domain.
+    Due to the huge size only used for saving into file.
+    :param domain: (string) a string url of scanned website with or without https://www.
+    :return: (string) raw whois obtained from passivetotal
+    """
+
+    analyzer.init()
+    who_is = analyzer.Hostname(domain).whois.pretty
+
+    return who_is

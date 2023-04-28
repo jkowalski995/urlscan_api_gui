@@ -1,16 +1,18 @@
-# DOMAIN SCAN for image scans
+# DOMAIN SCAN 
 
-This is a application created with use of PySimpleGUI for conducting scans with use of URLSCAN API and RiskIQ PassiveTotal API.
+This is an application created with use of PySimpleGUI for conducting scans with use of URLSCAN API and RiskIQ PassiveTotal API.
 
 ## Version history
 | Version | Comment                                                                                |
 |---------|----------------------------------------------------------------------------------------|
 | 0.1     | Initial version; only URLSCAN API feature working                                      |
 | 0.2     | Passive total API feature added; little GUI changes; added whois.py and image.py files |
+| 0.2.1   | Added raw WhoIs                                                                        |
 | 0.3     | Comming soon...                                                                        |
 
 ## Ideas
-
+- [x] Adding whole raw WhoIs record
+- [ ] Adding the CLI version
 - [ ] Reworking the GUI:
   - [ ] Creating the better and user-friendly UI
 - [ ] Saving whole data to some template e.g. Excel file
