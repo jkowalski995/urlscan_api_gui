@@ -12,6 +12,9 @@ This is an application created with use of PySimpleGUI for conducting scans with
 
 ## Ideas
 - [x] Adding whole raw WhoIs record
+- [ ] Adding saving the basic WhoIs
+- [ ] Adding confirmation about saving the WhoIs
+- Adding the default directory for saving screenshots
 - [ ] Adding the CLI version
 - [ ] Reworking the GUI:
   - [ ] Creating the better and user-friendly UI
