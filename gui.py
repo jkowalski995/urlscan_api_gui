@@ -62,21 +62,42 @@ def save_image(url=None, path=None, data=None):
     :param data: (bytes) image from urlscan.io API as a bytes object
     :return: None, it saved an image
     """
-    # Load image from BytesIO
-    image_to_save = PIL.Image.open(BytesIO(data))
 
-    image_to_save.save(path + url + '.png')
+    try:
+        # Load image from BytesIO
+        image_to_save = PIL.Image.open(BytesIO(data))
+
+        image_to_save.save(path + url + '.png')
+
+        sg.popup(f'Saved!', title='Success!')
+    except (FileNotFoundError, NameError, PermissionError):
+        sg.popup(f'The path is broken. \nCheck if provided PATH is correct.\nCheck if You have permission to save in '
+                 f'choosen location. \nOr do the scan before saving the image file!', title='Error!')
 
 
 def save_whois(text=None, path=None):
     """
     Will save the passed raw text as .txt file
     :param text (string) a string containing Whois info
-    :param path: (string) a string path to the place where the image should be saved
+    :param path: (string) a string path to the place where the whois should be saved
     :return: True, if it saved a text file, otherwise False
     """
     if len(text) > 0:
         with open('{0}whois.txt'.format(path), 'a') as f:
+            f.write(text)
+            return True
+    return False
+
+
+def save_basic_whois(text=None, path=None):
+    """
+    Will save the passed raw text as .txt file
+    :param text (string) a string containing basic Whois info
+    :param path: (string) a string path to the place where the basic whois should be saved
+    :return: True, if it saved a text file, otherwise False
+    """
+    if len(text) > 0:
+        with open('{0}basic_whois.txt'.format(path), 'a') as f:
             f.write(text)
             return True
     return False
@@ -90,6 +111,7 @@ layout = [
     [sg.Text('URL, e.g. https://domain.to.scan.url :')],
     [sg.InputText('', key='-URL-')],
     [sg.Button('Get Basic Whois', key='-GET-WHOIS-'), sg.Button('Save Whois to whois.txt', key='-SAVE-WHOIS-'),
+     sg.Button('Save Basic Whois to basic_whois.txt', key='-SAVE-BASIC-WHOIS-'),
      sg.Button('Get Image', key='-GET-IMAGE-', bind_return_key=True),
      sg.Button('Show original image size', key='-SHOW-'),
      sg.Button('Save original image', key='-SAVE-')],
@@ -149,6 +171,16 @@ while True:
         global_data['whois'] = whois_data
         window['-WHOIS-RAW-'].update(whois_data)
 
+    if event == '-SAVE-BASIC-WHOIS-':
+        try:
+            save_basic_whois(text=global_data['whois'], path=values['-PATH-'])
+            sg.popup(f'Saved!', title='Success!')
+        except (FileNotFoundError, NameError, PermissionError):
+            sg.popup(f'The path is broken. \nCheck if provided PATH is correct.\nCheck if You have permission to save in '
+                 f'choosen location. \nOr do the scan before saving '
+                     f'the basic_whois.txt file!', title='Error!')
+            continue
+
     if event == '-SAVE-WHOIS-':
         url = values['-URL-']
         parsed = urlparse(url)
@@ -166,8 +198,9 @@ while True:
         try:
             save_whois(text=global_data['full_whois'], path=values['-PATH-'])
             sg.popup(f'Saved!', title='Success!')
-        except (FileNotFoundError, NameError):
-            sg.popup(f'The path is broken. \nCheck if provided PATH is correct.\nOr do the scan before saving '
+        except (FileNotFoundError, NameError, PermissionError):
+            sg.popup(f'The path is broken. \nCheck if provided PATH is correct.\nCheck if You have permission to save in '
+                 f'choosen location. \nOr do the scan before saving '
                      f'the whois.txt file!', title='Error!')
             continue
 

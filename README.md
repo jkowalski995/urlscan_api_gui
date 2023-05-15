@@ -8,13 +8,14 @@ This is an application created with use of PySimpleGUI for conducting scans with
 | 0.1     | Initial version; only URLSCAN API feature working                                      |
 | 0.2     | Passive total API feature added; little GUI changes; added whois.py and image.py files |
 | 0.2.1   | Added raw WhoIs                                                                        |
+| 0.2.2   | Added saving basic WhoIs; Added confirmation for saving Image and basic WhoIs          |
 | 0.3     | Comming soon...                                                                        |
 
 ## Ideas
 - [x] Adding whole raw WhoIs record
-- [ ] Adding saving the basic WhoIs
-- [ ] Adding confirmation about saving the WhoIs
-- Adding the default directory for saving screenshots
+- [x] Adding saving the basic WhoIs
+- [x] Adding confirmation about saving the basic WhoIs and Image
+- [ ] Adding the default directory for saving screenshots, whois and basic whois
 - [ ] Adding the CLI version
 - [ ] Reworking the GUI:
   - [ ] Creating the better and user-friendly UI
