@@ -40,6 +40,13 @@ def whois_an(domain=None):
     whois_record = whois_record + "Registrar: " + str(registrar) + "\n"
 
     try:
+        asn = analyzer.Hostname(domain).ip.summary.asn
+    except Exception:
+        asn = ""
+
+    whois_record = whois_record + "ASN (based on IP): " + str(asn) + "\n"
+
+    try:
         ip = analyzer.Hostname(domain).ip
     except Exception:
         ip = ""
